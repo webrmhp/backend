@@ -36,7 +36,9 @@ app.use('/quiz', quizRoutes);
 app.use('/course', courseRoutes);
 app.use('/add-to-card', addToCardRoutes);
 app.use('/notify', notificationRoutes);
-
+app.get("/", (req,res)=>{
+  res.send("server app is running....")
+})
 const port = process.env.PORT || 3000;
 server.listen(port, () => {
   console.log(`Server running on port ${port}`);
