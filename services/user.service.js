@@ -37,7 +37,28 @@ const registerAndVerifyEmail = async (req, res) => {
     return { status: false, statusCode: 400, message: error.message };
   }
 };
-
+const createEmployee = async (req, res) => {
+  try {
+    const hashedPassword = await bcrypt.hash(req?.body.password, 10);
+    const newUser = new User({
+      name: req?.body?.name,
+      email: req?.body?.email,
+      employeeCode: req?.body?.employeeCode,
+      password: hashedPassword,
+      verified: true,
+      userType: 'Admin',
+    });
+    const savedEmployee = await newUser.save();
+    return {
+      status: true,
+      statusCode: 200,
+      message: 'Employee added Successfully!',
+      data: savedEmployee,
+    };
+  } catch (error) {
+    return { status: false, statusCode: 400, message: error.message };
+  }
+};
 const getEmployee = async (req, res) => {
   try {
     const employee = await User.find({ userType: 'Employee' });
@@ -299,4 +320,5 @@ module.exports = {
   updateUser,
   deleteUser,
   userLogin,
+  createEmployee,
 };
