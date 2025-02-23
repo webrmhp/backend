@@ -36,6 +36,7 @@ app.use('/quiz', quizRoutes);
 app.use('/course', courseRoutes);
 app.use('/video', courseVideoRoutes);
 app.use('/add-to-card', addToCardRoutes);
+
 app.use('/notify', notificationRoutes);
 app.get("/", (req,res)=>{
   res.send("server app is running....")
