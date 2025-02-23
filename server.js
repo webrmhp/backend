@@ -7,7 +7,7 @@ const userRoutes = require('./routes/user.routes');
 const courseRoutes = require('./routes/course.routes');
 const addToCardRoutes = require('./routes/addToCard.routes');
 const notificationRoutes = require('./routes/notify.routes');
-
+const courseVideoRoutes = require('./routes/courseVideo.routes');
 
 
 require('dotenv').config();
@@ -34,6 +34,7 @@ app.use(express.json());
 app.use('/users', userRoutes);
 app.use('/quiz', quizRoutes);
 app.use('/course', courseRoutes);
+app.use('/video', courseVideoRoutes);
 app.use('/add-to-card', addToCardRoutes);
 app.use('/notify', notificationRoutes);
 app.get("/", (req,res)=>{
