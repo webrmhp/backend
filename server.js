@@ -6,8 +6,11 @@ const quizRoutes = require('./routes/quiz.routes');
 const userRoutes = require('./routes/user.routes');
 const courseRoutes = require('./routes/course.routes');
 const addToCardRoutes = require('./routes/addToCard.routes');
-const notificationRoutes = require('./routes/notify.routes');
+const sliderRoutes = require('./routes/silder.routes');
+const logoRoutes = require('./routes/logo.routes');
 const courseVideoRoutes = require('./routes/courseVideo.routes');
+
+const questRoutes = require('./routes/quest.routes');
 
 
 require('dotenv').config();
@@ -36,8 +39,10 @@ app.use('/quiz', quizRoutes);
 app.use('/course', courseRoutes);
 app.use('/video', courseVideoRoutes);
 app.use('/add-to-card', addToCardRoutes);
+app.use('/slider', sliderRoutes);
+app.use('/logo', logoRoutes);
 
-app.use('/notify', notificationRoutes);
+app.use('/guest', questRoutes);
 app.get("/", (req,res)=>{
   res.send("server app is running....")
 })
