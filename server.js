@@ -8,7 +8,9 @@ const courseRoutes = require('./routes/course.routes');
 const addToCardRoutes = require('./routes/addToCard.routes');
 const sliderRoutes = require('./routes/silder.routes');
 const logoRoutes = require('./routes/logo.routes');
+const testimonialRoutes = require('./routes/testimonial.routes');
 const courseVideoRoutes = require('./routes/courseVideo.routes');
+const eventRoutes = require('./routes/event.routes');
 
 const questRoutes = require('./routes/quest.routes');
 
@@ -41,7 +43,8 @@ app.use('/video', courseVideoRoutes);
 app.use('/add-to-card', addToCardRoutes);
 app.use('/slider', sliderRoutes);
 app.use('/logo', logoRoutes);
-
+app.use('/testimonial', testimonialRoutes);
+app.use('/event', eventRoutes);
 app.use('/guest', questRoutes);
 app.get("/", (req,res)=>{
   res.send("server app is running....")
