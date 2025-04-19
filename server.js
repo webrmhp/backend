@@ -11,7 +11,6 @@ const logoRoutes = require('./routes/logo.routes');
 const testimonialRoutes = require('./routes/testimonial.routes');
 const courseVideoRoutes = require('./routes/courseVideo.routes');
 const eventRoutes = require('./routes/event.routes');
-
 const questRoutes = require('./routes/quest.routes');
 
 

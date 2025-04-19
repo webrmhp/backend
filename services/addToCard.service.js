@@ -73,6 +73,60 @@ const getList = async (req, res) => {
   }
 };
 
+const getWholeList = async (req, res) => {
+  try {
+    const ListAllAddToCard = await AddToCard.aggregate([
+      {
+        $lookup: {
+          from: 'courses',
+          localField: 'courseId',
+          foreignField: '_id',
+          as: 'courseDetails',
+        },
+      },
+      {
+        $unwind: {
+          path: '$courseDetails',
+          preserveNullAndEmptyArrays: false,
+        },
+      },
+      {
+        $match: {
+          status: { $in: ['Verified', 'Pending', 'Rejected'] }, // ✅ Only include these
+        },
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'userId',
+          foreignField: '_id',
+          as: 'userDetails',
+        },
+      },
+      {
+        $unwind: {
+          path: '$userDetails',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+    ]);
+
+    return {
+      status: true,
+      statusCode: 200,
+      message: 'whole request list',
+      data: ListAllAddToCard,
+    };
+  } catch (error) {
+    return {
+      status: false,
+      statusCode: 400,
+      message: error.message,
+      data: [],
+    };
+  }
+};
+
 
 const getMyPaidCourseList = async (req, res) => {
   try {
@@ -81,25 +135,24 @@ const getMyPaidCourseList = async (req, res) => {
       {
         $match: {
           userId: new mongoose.Types.ObjectId(userId), // Convert userId to ObjectId
-          status: { $in: ["Pending", "Verified"] }, // Filter only Pending and Verified statuses
+          status: { $in: ['Pending', 'Verified', 'Rejected'] }, // Filter only Pending and Verified statuses
         },
       },
       {
         $lookup: {
-          from: "courses", // Name of the collection for courses
-          localField: "courseId", // Field in AddToCard collection
-          foreignField: "_id", // Field in Course collection
-          as: "courseDetails", // Name of the resulting field
+          from: 'courses', // Name of the collection for courses
+          localField: 'courseId', // Field in AddToCard collection
+          foreignField: '_id', // Field in Course collection
+          as: 'courseDetails', // Name of the resulting field
         },
       },
       {
         $unwind: {
-          path: "$courseDetails", // Flatten the joined course details
+          path: '$courseDetails', // Flatten the joined course details
           preserveNullAndEmptyArrays: true, // Include AddToCard entries without matching courses
         },
       },
     ]);
-    
 
     return {
       status: true,
@@ -115,15 +168,15 @@ const getMyPaidCourseList = async (req, res) => {
 const verifyCourse = async (req, res) => {
   try {
     const { id } = req.query;
-    let _id = new mongoose.Types.ObjectId(id); 
+    let _id = new mongoose.Types.ObjectId(id);
     const updated = await AddToCard.findOneAndUpdate(
       { _id: _id },
-      { status: 'Verified' }
+      { status: req.body.status, reviewed: true }
     );
 
     return {
       status: true,
-      message: 'User enrollment verified successfully',
+      message: 'User enrollment status updated successfully',
       statusCode: 200,
       data: updated,
     };
@@ -142,7 +195,7 @@ const getAllPaidCourseList = async (req, res) => {
     const { id: courseId } = req.query;
 
     // Match "Pending" and "Verified" statuses
-    const matchQuery = { status: { $in: ["Pending", "Verified"] } };
+    const matchQuery = { status: { $in: ['Pending', 'Verified'] } };
 
     if (courseId) {
       matchQuery.courseId = new mongoose.Types.ObjectId(courseId); // ✅ Convert courseId to ObjectId
@@ -154,37 +207,37 @@ const getAllPaidCourseList = async (req, res) => {
       },
       {
         $lookup: {
-          from: "courses", // ✅ Ensure "courses" is the correct collection name
-          localField: "courseId",
-          foreignField: "_id",
-          as: "courseDetails",
+          from: 'courses', // ✅ Ensure "courses" is the correct collection name
+          localField: 'courseId',
+          foreignField: '_id',
+          as: 'courseDetails',
         },
       },
       {
         $lookup: {
-          from: "users", // ✅ Fixed: Use "users" instead of "user"
-          localField: "userId",
-          foreignField: "_id",
-          as: "userDetails",
+          from: 'users', // ✅ Fixed: Use "users" instead of "user"
+          localField: 'userId',
+          foreignField: '_id',
+          as: 'userDetails',
         },
       },
       {
         $unwind: {
-          path: "$courseDetails",
+          path: '$courseDetails',
           preserveNullAndEmptyArrays: true,
         },
       },
       {
         $unwind: {
-          path: "$userDetails",
+          path: '$userDetails',
           preserveNullAndEmptyArrays: true,
         },
       },
     ]);
 
-   return {
+    return {
       status: true,
-      message: "Paid Course List",
+      message: 'Paid Course List',
       statusCode: 200,
       data: ListPaid,
     };
@@ -197,8 +250,6 @@ const getAllPaidCourseList = async (req, res) => {
     };
   }
 };
-
-
 
 const uploadChallanNow = async (req, res) => {
   try {
@@ -223,6 +274,7 @@ const uploadChallanNow = async (req, res) => {
         paidChallan: paidChallan,
         uploadedAt: new Date().toLocaleString(),
         status: 'Pending',
+        reviewed:false,
       }
     );
     return {
@@ -287,4 +339,5 @@ module.exports = {
   getMyPaidCourseList,
   getAllPaidCourseList,
   verifyCourse,
+  getWholeList,
 };

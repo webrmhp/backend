@@ -20,6 +20,19 @@ const getAllAddToCard = async (req, res) => {
   });
 };
 
+const getAllList = async (req, res) => {
+  const data= await addToCart.getWholeList(req, res);
+  return res.status(data.statusCode).send({
+    status: data.status,
+    statusCode: data.statusCode,
+    message: data.message,
+    data: data?.data
+  });
+};
+
+
+
+
 const deleteAll = async (req, res) => {
   const data= await addToCart.removeFromCart(req, res);
   return res.status(data.statusCode).send({
@@ -75,4 +88,4 @@ const getAllUserPaidCourse = async (req, res) => {
 
 
 
-module.exports = { verifiedCourse,addToCard, getAllAddToCard , deleteAll, uploadChallan, getPaidCourse, getAllUserPaidCourse};
+module.exports = {getAllList, verifiedCourse,addToCard, getAllAddToCard , deleteAll, uploadChallan, getPaidCourse, getAllUserPaidCourse};

@@ -1,4 +1,14 @@
 const userService = require('../services/user.service');
+// Get  State
+const getState = async (req, res) => {
+  const data= await userService.ourState(req, res);
+  return res.status(data.statusCode).send({
+    status: data.status,
+    statusCode: data.statusCode,
+    message: data.message,
+    data: data?.data
+  });
+};
 // Varify Email
 const varifyEmail = async (req, res) => {
   const data= await userService.registerAndVerifyEmail(req, res);
@@ -14,6 +24,24 @@ const createEmployee = async (req, res) => {
   try {
     const employee = await userService.createEmployee(req, res);
     res.status(201).json(employee);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+// create LMS
+const createLMS = async (req, res) => {
+  try {
+    const LMS = await userService.setupLMS(req, res);
+    res.status(201).json(LMS);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+const verifyPassword = async (req, res) => {
+  try {
+    const LMS = await userService.passwordVerification(req, res);
+    res.status(201).json(LMS);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -120,6 +148,6 @@ const login = async (req, res) => {
 
 
 
-module.exports = { createEmployee,getEmployeeList,resetPassword,varifyEmail ,accountSetup, getUserList,editProfile,deleteProfile,getUserById,login };
+module.exports = {createLMS,verifyPassword, getState, createEmployee,getEmployeeList,resetPassword,varifyEmail ,accountSetup, getUserList,editProfile,deleteProfile,getUserById,login };
 
 

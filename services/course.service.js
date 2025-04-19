@@ -57,6 +57,21 @@ const getAllCourse = async (req, res) => {
   }
 };
 
+const getCourseByModes = async (req, res) => {
+  try {
+    
+    const course = await Course.find({ courseType : req.query?.type });
+    return {
+      status: true,
+      statusCode: 200,
+      message: 'Course by Mode',
+      data: course,
+    };
+  } catch (error) {
+    return { status: false, statusCode: 400, message: error.message, data: [] };
+  }
+};
+
 const getCourseById = async (req, res) => {
   try {
       const _id = new mongoose.Types.ObjectId(req.query?.id);
@@ -136,5 +151,6 @@ module.exports = {
   getAllCourse,
   getCourseById,
   updateCou,
-  deleteCour
+  deleteCour,
+  getCourseByModes
 };

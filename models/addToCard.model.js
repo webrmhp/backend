@@ -7,6 +7,7 @@ const orderSchema = new mongoose.Schema({
   uploadedAt: { type: Date, required: false },
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   addedAt: { type: Date, default: Date.now } ,
+  reviewed:{ type: Boolean, required: false , default:false}
 });
 
 module.exports = mongoose.model('AddToCart', orderSchema);

@@ -32,6 +32,18 @@ const getCourseById = async (req, res) => {
   });
 };
 
+const getCourseByMode = async (req, res) => {
+  const data= await courseService.getCourseByModes(req, res);
+  return res.status(data.statusCode).send({
+    status: data.status,
+    statusCode: data.statusCode,
+    message: data.message,
+    data: data?.data
+  });
+};
+
+
+
 
 const deleteCourse = async (req, res) => {
   const data= await courseService.deleteCour(req, res);
@@ -53,4 +65,4 @@ const updateCourse = async (req, res) => {
     data: data?.data
   });
 };
-module.exports = {deleteCourse,updateCourse, createCourse, getCourseList, getCourseById };
+module.exports = {deleteCourse,getCourseByMode,updateCourse, createCourse, getCourseList, getCourseById };

@@ -1,4 +1,6 @@
 const Quiz = require('../models/quiz.model.js');
+const mongoose = require('mongoose');
+
 // const Marks = require('../models/marks.model.js');
 const quizRoutes = async (req, res) => {
   try {
@@ -21,12 +23,27 @@ const quizRoutes = async (req, res) => {
 };
 const getAllQuizQuestion = async (req, res) => {
   try {
-    const testType = req.query?.type
-    const quizzes = await Quiz.find({testType}).select('-answer');
+    const testType = req.query?.type;
+    const page = req.query?.page;
+    
+    let quizzes;
+    
+    // Check if page is 'signup', if so, return a random 5 questions
+    if (page === 'signup') {
+      quizzes = await Quiz.aggregate([
+        { $match: { testType } },  // Match the testType
+        { $sample: { size: 5 } },  // Randomly sample 5 questions
+        { $project: { answer: 0 } } // Exclude 'answer' field
+      ]);
+    } else {
+      // Otherwise, fetch all quizzes without the 'answer' field
+      quizzes = await Quiz.find({ testType }).select('-answer');
+    }
+ console.log(quizzes)
     return {
       status: true,
       statusCode: 200,
-      message: 'Quiz question List',
+      message: 'Quiz question list',
       data: quizzes,
     };
   } catch (err) {
@@ -38,6 +55,7 @@ const getAllQuizQuestion = async (req, res) => {
     };
   }
 };
+
 
 const getMyMarkReady = async (req, res) => {
   try {
@@ -90,9 +108,34 @@ const getMyMarkReady = async (req, res) => {
   }
 };
 
+const removeQuestion = async (req, res) => {
+  try {
+    const _id = new mongoose.Types.ObjectId(req.query?.id);
+
+    const deleted = await Quiz.findByIdAndDelete({_id})
+
+    return {
+      status: true,
+      statusCode: 200,
+      message: `Question removed from quiz`,
+      data: {
+
+      },
+    };
+  } catch (err) {
+    return {
+      status: false,
+      statusCode: 400,
+      message: err.message,
+      data: [],
+    };
+  }
+};
+
 
 module.exports = {
   quizRoutes,
   getAllQuizQuestion,
-  getMyMarkReady
+  getMyMarkReady,
+  removeQuestion
 };

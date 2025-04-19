@@ -4,5 +4,6 @@ const router = express.Router();
 router.post("/add-question", quizController.createQuiz);
 router.get("/get-list", quizController.getReadyQuiz);
 router.post("/get-marks-ready", quizController.getMarksReady);
+router.delete("/remove", quizController.deleteQuestion);
 
 module.exports = router;

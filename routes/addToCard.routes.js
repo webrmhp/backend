@@ -11,5 +11,7 @@ router.patch('/upload-challan', authMiddleware, orderController.uploadChallan);
 router.get('/get-paid', authMiddleware, orderController.getPaidCourse);
 router.get('/get-paid-all', authMiddleware, orderController.getAllUserPaidCourse);
 router.patch('/verify-request', authMiddleware, orderController.verifiedCourse);
+router.get('/get-whole-list', authMiddleware, orderController.getAllList);
+
 
 module.exports = router;

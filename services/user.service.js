@@ -1,8 +1,36 @@
 const User = require('../models/user.model');
+const Course = require('../models/course.model');
+const AddToCard = require('../models/addToCard.model');
 const bcrypt = require('bcryptjs');
 const { uploadImage } = require('../config/cloudinary');
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
+
+const ourState = async (req, res) => {
+  try {
+    let user = await User.find({ userType: 'Student' });
+    let instructors = await User.find({ userType: 'Instructors' });
+    let course = await Course.find();
+    let addToCard = await AddToCard.find({
+      status: { $in: ['Pending', 'Verified'] },
+    });
+
+    const data = {
+      totalSudent: user?.length,
+      totalInstructors: instructors?.length,
+      totalCourse: course?.length,
+      enrolledCourse: addToCard?.length,
+    };
+    return {
+      status: true,
+      statusCode: 201,
+      message: 'Website State',
+      data: data,
+    };
+  } catch (error) {
+    return { status: false, statusCode: 400, message: error.message };
+  }
+};
 const registerAndVerifyEmail = async (req, res) => {
   const { email, address, profilePhoto, CNIC, previousDigree } = req.body;
 
@@ -52,6 +80,58 @@ const createEmployee = async (req, res) => {
       statusCode: 200,
       message: 'Employee added Successfully!',
       data: savedEmployee,
+    };
+  } catch (error) {
+    return { status: false, statusCode: 400, message: error.message };
+  }
+};
+
+const setupLMS = async (req, res) => {
+  try {
+    const hashedPassword = await bcrypt.hash(req?.body.password, 10);
+    let lmsPassword = req?.body.password;
+    let ashPassword = hashedPassword;
+    let LMSStatus = req?.body.status;
+    const user = await User.findOne({ email: req?.body.email });
+    if (user) {
+      const user = await User.findOneAndUpdate(
+        { email: req?.body.email },
+        { lmsPassword, ashPassword, LMSStatus }
+      );
+    } else {
+      return { status: false, statusCode: 400, message: 'User not exist' };
+    }
+    return {
+      status: true,
+      statusCode: 200,
+      message: 'LMS is setup added Successfully!',
+      data: user,
+    };
+  } catch (error) {
+    return { status: false, statusCode: 400, message: error.message };
+  }
+};
+
+const passwordVerification = async (req, res) => {
+  try {
+  
+    const user = await User.findOne({ email: req?.body.email });
+
+    const isMatch = await bcrypt.compare(req?.body?.password, user.password);
+    if (!isMatch) {
+      return {
+        status: false,
+        statusCode: 400,
+        message: 'Invalid passwored',
+      };
+    }
+   
+   
+    return {
+      status: true,
+      statusCode: 200,
+      message: 'Password match Successfully!',
+      data: user,
     };
   } catch (error) {
     return { status: false, statusCode: 400, message: error.message };
@@ -319,4 +399,7 @@ module.exports = {
   deleteUser,
   userLogin,
   createEmployee,
+  ourState,
+  setupLMS,
+  passwordVerification,
 };

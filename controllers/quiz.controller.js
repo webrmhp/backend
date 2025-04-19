@@ -27,5 +27,15 @@ const getMarksReady = async (req, res) => {
     data: data?.data,
   });
 };
+const deleteQuestion = async (req, res) => {
+  const data = await requestService.removeQuestion(req, res);
+  return res.status(data.statusCode).send({
+    status: data.status,
+    statusCode: data.statusCode,
+    message: data.message,
+    data: data?.data,
+  });
+};
 
-module.exports = {createQuiz, getReadyQuiz, getMarksReady};
+
+module.exports = {deleteQuestion,createQuiz, getReadyQuiz, getMarksReady};
